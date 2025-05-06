@@ -3,7 +3,7 @@
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h1 class="h1">Manage Posts</h1>
         <div class="text-end">
-          <a href="/manage-users-add" class="btn btn-primary btn-sm"
+          <a href="/manage-posts-add" class="btn btn-primary btn-sm"
             >Add New Post</a
           >
         </div>
