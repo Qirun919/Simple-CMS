@@ -5,8 +5,10 @@
             <h5 class="card-title text-center mb-3 py-3 border-bottom">
             Login To Your Account
             </h5>
+            <!-- display success message --> 
+            <?php require "parts/message_success.php"; ?>
             <!-- display error -->  
-            <?php require ("parts/message_error.php") ?>
+            <?php require ("parts/message_error.php"); ?>
             <!-- login form-->
             <form action="/auth/login" method="POST">
             <div class="mb-3">
@@ -30,9 +32,7 @@
         </div>
 
             <!-- links -->
-            <div
-        class="d-flex justify-content-between align-items-center gap-3 mx-auto pt-3"
-        >
+            <div class="d-flex justify-content-between align-items-center gap-3 mx-auto pt-3">
             <a href="/" class="text-decoration-none small"><i class="bi bi-arrow-left-circle"></i> Go back</a>
             <a href="/signup" class="text-decoration-none small">Don't have an account? Sign up here
                 <i class="bi bi-arrow-right-circle"></i>
