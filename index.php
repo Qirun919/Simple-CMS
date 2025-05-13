@@ -78,8 +78,8 @@
       case '/post/add':
         require "includes/post/add_post.php";
         break;
-      case '/post/edit':
-        require "includes/post/edit_post.php";
+      case '/post/update':
+        require "includes/post/update_post.php";
         break;
       default:
         require "pages/home.php";

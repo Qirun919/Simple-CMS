@@ -1,19 +1,34 @@
 <?php
-  // 1. connect to database
+
   $database = connectToDB();
-  // 2. get all the users
-    // 2.1
-  $sql = "SELECT * FROM posts";
-  // 2.2
-  $query = $database->query( $sql );
-  // 2.3
-  $query->execute();
-  // 2.4
+
+  /*
+    use ORDER BY to sort by column
+    use ASC to sort by ascending order (lowest value first)
+    use DESC tp sort by descending order (highest value first)
+  */
+  $user_id = $_SESSION["user"]["id"];
+  /*
+    use WHERE to filter by user_id
+  */
+  if ( isEditor() ) {
+    // no filter for admin or editor
+    $sql = "SELECT * FROM posts ORDER BY id DESC";
+    $query = $database->prepare( $sql );
+    $query->execute();
+  } else {
+    // filter by user_id for normal user
+    $sql = "SELECT * FROM posts WHERE user_id = :user_id ORDER BY id DESC";
+    $query = $database->prepare( $sql );
+    $query->execute([
+      "user_id" => $user_id
+    ]);
+  }
+
   $posts = $query->fetchAll();
 ?>
-
 <?php require "parts/header.php"; ?>
-    <div class="container mx-auto my-5" style="max-width: 700px;">
+<div class="container mx-auto my-5" style="max-width: 700px;">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h1 class="h1">Manage Posts</h1>
         <div class="text-end">
@@ -23,7 +38,7 @@
         </div>
       </div>
       <div class="card mb-2 p-4">
-      <?php require "parts/message_success.php"; ?>
+        <?php require "parts/message_success.php"; ?>
         <table class="table">
           <thead>
             <tr>
@@ -34,21 +49,25 @@
             </tr>
           </thead>
           <tbody>
-          <?php foreach ($posts as $index => $post) : ?>           
+          <?php foreach( $posts as $post ) : ?>
             <tr>
-            <th scope="row"><?php echo $index + 1; ?></th>
-            <td><?php echo $post['title']; ?></td>
-              <td><span class="badge bg-success">Publish</span></td>
+              <th scope="row"><?= $post["id"]; ?></th>
+              <td><?= $post["title"]; ?></td>
+              <?php if ( $post["status"] === 'pending' ) : ?>
+                <td><span class="badge bg-warning">Pending Review</span></td>
+              <?php else: ?>
+                <td><span class="badge bg-success">Publish</span></td>
+              <?php endif; ?>
               <td class="text-end">
                 <div class="buttons">
                   <a
-                    href="/post"
+                    href="/post?id=<?= $post["id"]; ?>"
                     target="_blank"
-                    class="btn btn-primary btn-sm me-2"
+                    class="btn btn-primary btn-sm me-2 <?php echo ( $post["status"] === 'pending' ? "disabled" : "" ); ?>"
                     ><i class="bi bi-eye"></i
                   ></a>
                   <a
-                    href="/manage-posts-edit"
+                    href="/manage-posts-edit?id=<?= $post["id"]; ?>"
                     class="btn btn-secondary btn-sm me-2"
                     ><i class="bi bi-pencil"></i
                   ></a>
@@ -57,7 +76,7 @@
                      <i class="bi bi-trash"></i>
                   </button>
 
-                   <!-- Modal -->
+                  <!-- Modal -->
                   <div class="modal fade" id="postDeleteModal-<?php echo $post['id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
@@ -85,10 +104,11 @@
                       </div>
                     </div>
                   </div>
+                  <!-- end of modal -->
                 </div>
               </td>
             </tr>
-            <?php endforeach; ?>
+          <?php endforeach; ?>
           </tbody>
         </table>
       </div>
@@ -99,4 +119,4 @@
       </div>
     </div>
 
-    <?php require "parts/footer.php"; ?>
+<?php require "parts/footer.php"; ?>
