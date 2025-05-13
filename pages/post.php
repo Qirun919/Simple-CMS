@@ -7,7 +7,12 @@
     
     // load the post data by id
     // SQL
-    $sql = "SELECT * FROM posts WHERE id = :id";
+    $sql = "SELECT 
+            posts.*, users.name 
+            FROM posts 
+            JOIN users
+            ON posts.user_id = users.id
+            WHERE posts.id = :id";
     // prepare
     $query = $database->prepare( $sql );
     // execute
@@ -21,6 +26,7 @@
 
 <div class="container mx-auto my-5" style="max-width: 500px;">
       <h1 class="h1 mb-4 text-center"><?= $post["title"]; ?></h1>
+      <h4 class="text-center">By <?= $post["name"]; ?></h4>
       <?php
         /*
           $content = "1,2,3,4,5";

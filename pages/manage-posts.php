@@ -13,12 +13,23 @@
   */
   if ( isEditor() ) {
     // no filter for admin or editor
-    $sql = "SELECT * FROM posts ORDER BY id DESC";
+    $sql = "SELECT 
+              posts.*, users.name
+             FROM posts 
+             JOIN users 
+             ON posts.user_id = users.id 
+             ORDER BY posts.id DESC";
     $query = $database->prepare( $sql );
     $query->execute();
   } else {
     // filter by user_id for normal user
-    $sql = "SELECT * FROM posts WHERE user_id = :user_id ORDER BY id DESC";
+    $sql = "SELECT 
+              posts.*, users.name
+              FROM posts 
+              JOIN users
+              ON posts.user_id = users.id 
+              WHERE posts.user_id = :user_id 
+              ORDER BY posts.id DESC";
     $query = $database->prepare( $sql );
     $query->execute([
       "user_id" => $user_id
@@ -44,6 +55,7 @@
             <tr>
               <th scope="col">ID</th>
               <th scope="col" style="width: 40%;">Title</th>
+              <th scope="col">Author</th>
               <th scope="col">Status</th>
               <th scope="col" class="text-end">Actions</th>
             </tr>
@@ -53,6 +65,7 @@
             <tr>
               <th scope="row"><?= $post["id"]; ?></th>
               <td><?= $post["title"]; ?></td>
+              <td><?= $post["name"]; ?></td>
               <?php if ( $post["status"] === 'pending' ) : ?>
                 <td><span class="badge bg-warning">Pending Review</span></td>
               <?php else: ?>
