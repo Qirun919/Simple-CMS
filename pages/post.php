@@ -27,6 +27,9 @@
 <div class="container mx-auto my-5" style="max-width: 500px;">
       <h1 class="h1 mb-4 text-center"><?= $post["title"]; ?></h1>
       <h4 class="text-center">By <?= $post["name"]; ?></h4>
+      <div class="mb-2">
+        <img src="<?= $post["image"]; ?>" class="img-fluid" />
+      </div>
       <?php
         /*
           $content = "1,2,3,4,5";

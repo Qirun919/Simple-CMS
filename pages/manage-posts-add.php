@@ -4,7 +4,9 @@
         <h1 class="h1">Add New Post</h1>
       </div>
       <div class="card mb-2 p-4">
-      <form method="POST" action="/post/add">  
+      <form method="POST" 
+            action="/post/add" 
+            enctype="multipart/form-data">  
           <!-- display success message -->
           <?php require ("parts/message_success.php"); ?>
           <!-- display error message -->
@@ -23,6 +25,9 @@
               rows="10"
               name="content"
             ></textarea>
+          </div>
+          <div class="mb-3">
+             <input type="file" name="image" accept="image/*" >
           </div>
           <div class="text-end">
             <button type="submit" class="btn btn-primary">Add</button>

@@ -3,40 +3,48 @@
     // 1. connect to database
     $database = connectToDB();
 
+
     // 2. get all the data from the form using $_POST
-    
     $title = $_POST["title"];
     $content = $_POST["content"];
+    $image = $_FILES["image"];
+
     /*
         3. error checking
         - make sure all the fields are not empty 
-        - make sure the password is match 
-        - make sure the email provided does not exist in the system
     */
-    
     if (empty($title) || empty($content) ) {
         $_SESSION["error"] = "All fields are required";
         header("Location: /manage-posts-add");
         exit;
-    } 
+    }
 
-        //step 1 recipe
-        $sql = "INSERT INTO posts (`title`, `content`,`user_id`) VALUES (:title, :content, :user_id)";
-        //step 2 prepare
-        $statement = $database->prepare($sql);
-        //step 3 let them cook
-        
-        $statement->execute([ // add more
-            "title" => $title,
-            "content" => $content,
-            "user_id" => $_SESSION["user"]["id"]
-        ]);
-        
-        //step 4 display success message
-        $_SESSION["success"] = "users post has been created";
+    // trigger the file upload
+    // make sure $image is not empty
+    if ( !empty( $image ) ) {
+        // where is the upload folder
+        $target_folder = "uploads/";
+        // add the image name to the upload folder path
+        $target_path = $target_folder . basename( $image["name"] );
+        // move the file to the uploads folder
+        move_uploaded_file( $image["tmp_name"] , $target_path );
+    }
+
+    // create the post
+
+    $sql = "INSERT INTO posts (`title`,`content`, `image`, `user_id`) VALUES (:title, :content, :image, :user_id)";
+    $query = $database->prepare($sql);
+    $query->execute([
+        "title" => $title,
+        "content" => $content,
+        "image" => isset( $target_path ) ? $target_path : "",
+        "user_id" => $_SESSION["user"]["id"]
+    ]);
+
+    //step 4 display success message
+    $_SESSION["success"] = "Post has been created";
 
 
-    // 5. Redirect back to the /manage-users page
+    // 5. Redirect back to the /manage-posts page
     header("Location: /manage-posts"); 
-    exit; 
-?>
+    exit; // meow :3
